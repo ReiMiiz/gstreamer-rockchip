@@ -73,7 +73,7 @@ gst_mpp_h264_enc_set_format (GstVideoEncoder * encoder,
   memset (&codec_cfg, 0, sizeof (codec_cfg));
 
   rc_cfg.change = MPP_ENC_RC_CFG_CHANGE_ALL;
-  rc_cfg.rc_mode = MPP_ENC_RC_MODE_CBR;
+  rc_cfg.rc_mode = MPP_ENC_RC_MODE_VBR;
   rc_cfg.quality = MPP_ENC_RC_QUALITY_MEDIUM;
 
   rc_cfg.fps_in_flex = 0;
@@ -110,14 +110,14 @@ gst_mpp_h264_enc_set_format (GstVideoEncoder * encoder,
       rc_cfg.bps_max = -1;
       rc_cfg.bps_min = -1;
     } else {
-      codec_cfg.h264.qp_max = 40;
-      codec_cfg.h264.qp_min = 12;
-      codec_cfg.h264.qp_max_step = 0;
-      codec_cfg.h264.qp_init = 0;
+      codec_cfg.h264.qp_max = 0;
+      codec_cfg.h264.qp_min = 0;
+      codec_cfg.h264.qp_max_step = 8;
+      codec_cfg.h264.qp_init = 32;
 
       rc_cfg.bps_target = GST_VIDEO_INFO_WIDTH (&state->info)
           * GST_VIDEO_INFO_HEIGHT (&state->info)
-          / 8 * GST_VIDEO_INFO_FPS_N (&state->info)
+          / 16 * GST_VIDEO_INFO_FPS_N (&state->info)
           / GST_VIDEO_INFO_FPS_D (&state->info);
       rc_cfg.bps_max = rc_cfg.bps_target * 17 / 16;
       rc_cfg.bps_min = rc_cfg.bps_target * 1 / 16;
